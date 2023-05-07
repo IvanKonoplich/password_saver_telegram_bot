@@ -1,6 +1,6 @@
 package entities
 
-type DataToSave struct {
+type IncomingData struct {
 	ChatID       int
 	ResourceName string
 	Password     string

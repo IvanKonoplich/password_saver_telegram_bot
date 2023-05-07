@@ -1,9 +1,11 @@
 package usecase
 
+import "password_storage_telegram/internal/entities"
+
 type Storage interface {
-	Set() error
-	Get() (string, error)
-	Del() error
+	Set(inc entities.IncomingData) error
+	Get(inc entities.IncomingData) (string, error)
+	Del(inc entities.IncomingData) error
 }
 
 type UseCase struct {

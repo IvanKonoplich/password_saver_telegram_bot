@@ -9,6 +9,17 @@ import (
 	"strings"
 )
 
+const helpMessage string = "Я знаю следующие команды: " +
+	"\n/set для сохранения пароля для какого-нибудь ресурса. Пример: /set ресурс.ru пароль12345 " +
+	"\n/get для получения сохраненного пароля для какого-нибудь ресурса. Пример: /get ресурс.ru" +
+	"\n/del для удаления сохраненного пароля от какого-нибудь ресурса. Пример: /del ресурс.ru" +
+	"\n/help для того, чтобы посмотреть инструкцию"
+const helloMessage string = "Привет, я бот для сохранения паролей. Я знаю следующие команды: " +
+	"\n/set для сохранения пароля для какого-нибудь ресурса. Пример: /set ресурс.ru пароль12345 " +
+	"\n/get для получения сохраненного пароля для какого-нибудь ресурса. Пример: /get ресурс.ru" +
+	"\n/del для удаления сохраненного пароля от какого-нибудь ресурса. Пример: /del ресурс.ru" +
+	"\n/help для того, чтобы посмотреть инструкцию"
+
 func (tgc *TgController) Respond(botURL string, update models.Update) error {
 	//структура для ответа
 	var botMessage models.BotMessage
@@ -22,8 +33,8 @@ func (tgc *TgController) Respond(botURL string, update models.Update) error {
 			responseText = "Неправильная команда. Введите команду, ресурс и пароль через пробел. Пример: /set ресурс.ru пароль12345"
 			break
 		}
-		dts := entities.DataToSave{ResourceName: incoming[1], Password: incoming[2]}
-		err := tgc.uc.Set(dts)
+		incData := entities.IncomingData{ResourceName: incoming[1], Password: incoming[2], ChatID: update.Message.Chat.ChatID}
+		err := tgc.uc.Set(incData)
 		if err != nil {
 			responseText = err.Error()
 		}
@@ -33,7 +44,8 @@ func (tgc *TgController) Respond(botURL string, update models.Update) error {
 			responseText = "Неправильная команда. Введите команду и ресурс через пробел. Пример: /get ресурс.ru"
 			break
 		}
-		savedData, err := tgc.uc.Get(incoming[1])
+		incData := entities.IncomingData{ResourceName: incoming[1], ChatID: update.Message.Chat.ChatID}
+		savedData, err := tgc.uc.Get(incData)
 		if err != nil {
 			responseText = err.Error()
 		}
@@ -43,11 +55,16 @@ func (tgc *TgController) Respond(botURL string, update models.Update) error {
 			responseText = "Неправильная команда. Введите команду и ресурс через пробел. Пример: /del ресурс.ru"
 			break
 		}
-		err := tgc.uc.Del(incoming[1])
+		incData := entities.IncomingData{ResourceName: incoming[1], ChatID: update.Message.Chat.ChatID}
+		err := tgc.uc.Del(incData)
 		if err != nil {
 			responseText = err.Error()
 		}
 		responseText = "пароль успешно удален"
+	case "/help":
+		responseText = helpMessage
+	case "/start":
+		responseText = helloMessage
 	default:
 		responseText = "неизвестная команда"
 	}

@@ -6,9 +6,9 @@ import (
 )
 
 type UseCase interface {
-	Set(inc entities.DataToSave) error
-	Get(ResourceName string) (string, error)
-	Del(ResourceName string) error
+	Set(inc entities.IncomingData) error
+	Get(inc entities.IncomingData) (string, error)
+	Del(inc entities.IncomingData) error
 }
 type TgController struct {
 	uc UseCase
@@ -28,7 +28,7 @@ func (tgc *TgController) RunTgController(botToken string) {
 			logrus.Errorf("smt went wrong: %s", err.Error())
 		}
 		for _, update := range updates {
-			logrus.Infof("new message: %s", update.Message.Text)
+			logrus.Infof("new message: %s, from: %d", update.Message.Text, update.Message.Chat.ChatID)
 			err = tgc.Respond(botURL, update)
 			offset = update.UpdateID + 1
 			if err != nil {

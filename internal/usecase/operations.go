@@ -2,13 +2,13 @@ package usecase
 
 import "password_storage_telegram/internal/entities"
 
-func (*UseCase) Set(inc entities.DataToSave) error {
+func (*UseCase) Set(inc entities.IncomingData) error {
 	return nil
 }
-func (*UseCase) Get(ResourceName string) (string, error) {
+func (*UseCase) Get(inc entities.IncomingData) (string, error) {
 	return "", nil
 }
-func (*UseCase) Del(ResourceName string) error {
+func (*UseCase) Del(inc entities.IncomingData) error {
 	return nil
 }
 
