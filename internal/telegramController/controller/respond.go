@@ -48,8 +48,9 @@ func (tgc *TgController) Respond(botURL string, update models.Update) error {
 		savedData, err := tgc.uc.Get(incData)
 		if err != nil {
 			responseText = err.Error()
+		} else {
+			responseText = savedData
 		}
-		responseText = savedData
 	case "/del":
 		if len(incoming) != 2 {
 			responseText = "Неправильная команда. Введите команду и ресурс через пробел. Пример: /del ресурс.ru"

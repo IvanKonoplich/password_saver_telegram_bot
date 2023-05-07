@@ -6,7 +6,7 @@ func (s *Storage) Set(inc entities.IncomingData) error {
 	return nil
 }
 func (s *Storage) Get(inc entities.IncomingData) (string, error) {
-	return "", nil
+	return "ouhiuh", nil
 }
 func (s *Storage) Del(inc entities.IncomingData) error {
 	return nil
