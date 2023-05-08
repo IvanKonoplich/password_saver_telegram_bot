@@ -20,7 +20,7 @@ func (uc *UseCase) Get(inc entities.IncomingData) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if is {
+	if !is {
 		return "", errors.New("у вас нет сохраненного пароля для этого ресурса")
 	}
 	return uc.st.Get(inc)
@@ -30,7 +30,7 @@ func (uc *UseCase) Del(inc entities.IncomingData) error {
 	if err != nil {
 		return err
 	}
-	if is {
+	if !is {
 		return errors.New("у вас нет сохраненного пароля для этого ресурса")
 	}
 	return uc.st.Del(inc)

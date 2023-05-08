@@ -6,3 +6,4 @@ db:
   username: "postgres"
   DBName: "postgres"
   SSLMode: "disable"
+

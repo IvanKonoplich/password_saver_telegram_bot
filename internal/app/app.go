@@ -1,6 +1,7 @@
 package app
 
 import (
+	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"password_storage_telegram/internal/infrastructure/storage"
 	"password_storage_telegram/internal/telegramController/controller"

@@ -22,5 +22,14 @@ func OpenDBConnection(cfg ConfigDB) (*sqlx.DB, error) {
 		return nil, err
 	}
 	logrus.Info("postgres connection opened successfully")
+	schema := `CREATE TABLE IF NOT EXISTS passwords(
+		chat_id int not null ,
+		resource varchar not null,
+		password varchar not null
+	);`
+	_, err = db.Exec(schema)
+	if err != nil {
+		return nil, err
+	}
 	return db, nil
 }

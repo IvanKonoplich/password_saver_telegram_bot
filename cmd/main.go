@@ -9,8 +9,10 @@ import (
 	"password_storage_telegram/internal/infrastructure/storage"
 )
 
+//docker run --name tg_password_bot -p 5432:5432 -e POSTGRES_PASSWORD=qwerty -d postgres
 func main() {
-	botToken, postgresPassword := initGoDotEnv()
+	botToken := initGoDotEnv()
+	postgresPassword := "qwerty"
 	if err := initConfig(); err != nil {
 		logrus.Fatalf("error while reading config file:%s", err.Error())
 	}
@@ -33,11 +35,11 @@ func initConfig() error {
 	return viper.ReadInConfig()
 }
 
-func initGoDotEnv() (string, string) {
+func initGoDotEnv() string {
 	err := godotenv.Load()
 	if err != nil {
 		logrus.Fatal("Error loading .env file")
 	}
 
-	return os.Getenv("bot_token"), os.Getenv("POSTGRES_PASSWORD")
+	return os.Getenv("BOT_TOKEN")
 }

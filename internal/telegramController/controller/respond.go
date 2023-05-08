@@ -3,10 +3,12 @@ package controller
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"password_storage_telegram/internal/entities"
 	"password_storage_telegram/internal/telegramController/models"
 	"strings"
+	"time"
 )
 
 const helpMessage string = "Я знаю следующие команды: " +
@@ -37,8 +39,32 @@ func (tgc *TgController) Respond(botURL string, update models.Update) error {
 		err := tgc.uc.Set(incData)
 		if err != nil {
 			responseText = err.Error()
+		} else {
+			responseText = "Пароль успешно сохранен"
 		}
-		responseText = "пароль успешно сохранен"
+		go func() {
+			time.Sleep(time.Second * 3)
+			var deleteQuery models.DeleteMessageQuery
+			deleteQuery.ChatId = update.Message.Chat.ChatID
+			deleteQuery.MessageID = update.Message.MessageID
+			buf, err := json.Marshal(deleteQuery)
+			_, err = http.Post(botURL+"/deleteMessage", "application/json", bytes.NewBuffer(buf))
+			if err != nil {
+				logrus.Infof("error while deleting message from chat: %s", err.Error())
+			}
+			botMessage.ChatId = update.Message.Chat.ChatID
+			botMessage.Text = "Сообщение с паролем удалено из этого чата"
+			//формируем ответ
+			buf, err = json.Marshal(botMessage)
+			if err != nil {
+				logrus.Errorf("error while deleting message from chat: %s", err.Error())
+			}
+			//отправляем ответ
+			_, err = http.Post(botURL+"/sendMessage", "application/json", bytes.NewBuffer(buf))
+			if err != nil {
+				logrus.Errorf("error while deleting message from chat: %s", err.Error())
+			}
+		}()
 	case "/get":
 		if len(incoming) != 2 {
 			responseText = "Неправильная команда. Введите команду и ресурс через пробел. Пример: /get ресурс.ru"
@@ -60,14 +86,15 @@ func (tgc *TgController) Respond(botURL string, update models.Update) error {
 		err := tgc.uc.Del(incData)
 		if err != nil {
 			responseText = err.Error()
+		} else {
+			responseText = "Пароль успешно удален"
 		}
-		responseText = "пароль успешно удален"
 	case "/help":
 		responseText = helpMessage
 	case "/start":
 		responseText = helloMessage
 	default:
-		responseText = "неизвестная команда"
+		responseText = "Неизвестная команда"
 	}
 
 	botMessage.ChatId = update.Message.Chat.ChatID
