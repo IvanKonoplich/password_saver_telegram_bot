@@ -10,7 +10,7 @@ Telegram бот, который обладает функционалом пер
 
 Бот доступен по ссылке t.me/PasswordSaver_bot
 ## Запуск
-
+Для запуска необходимо в environment в docker-compose.yml указать BOT_TOKEN, либо сделать это в в файле .env 
 Проект запускается с помощью Docker-compose. 
 
   * **Первый запуск:**

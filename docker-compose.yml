@@ -11,6 +11,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=qwerty
 
+
   db:
     restart: always
     image: postgres:latest

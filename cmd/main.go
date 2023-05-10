@@ -38,7 +38,7 @@ func initConfig() error {
 func initGoDotEnv() string {
 	err := godotenv.Load()
 	if err != nil {
-		logrus.Fatal("Error loading .env file")
+		logrus.Error("Error loading .env file")
 	}
 
 	return os.Getenv("BOT_TOKEN")
