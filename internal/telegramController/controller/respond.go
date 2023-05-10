@@ -77,6 +77,29 @@ func (tgc *TgController) Respond(botURL string, update models.Update) error {
 		} else {
 			responseText = savedData
 		}
+		go func() {
+			time.Sleep(time.Second * 5)
+			var deleteQuery models.DeleteMessageQuery
+			deleteQuery.ChatId = update.Message.Chat.ChatID
+			deleteQuery.MessageID = update.Message.MessageID + 1
+			buf, err := json.Marshal(deleteQuery)
+			_, err = http.Post(botURL+"/deleteMessage", "application/json", bytes.NewBuffer(buf))
+			if err != nil {
+				logrus.Infof("error while deleting message from chat: %s", err.Error())
+			}
+			botMessage.ChatId = update.Message.Chat.ChatID
+			botMessage.Text = "Сообщение с паролем удалено из этого чата"
+			//формируем ответ
+			buf, err = json.Marshal(botMessage)
+			if err != nil {
+				logrus.Errorf("error while deleting message from chat: %s", err.Error())
+			}
+			//отправляем ответ
+			_, err = http.Post(botURL+"/sendMessage", "application/json", bytes.NewBuffer(buf))
+			if err != nil {
+				logrus.Errorf("error while deleting message from chat: %s", err.Error())
+			}
+		}()
 	case "/del":
 		if len(incoming) != 2 {
 			responseText = "Неправильная команда. Введите команду и ресурс через пробел. Пример: /del ресурс.ru"
